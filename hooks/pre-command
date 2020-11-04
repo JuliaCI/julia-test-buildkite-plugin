@@ -5,12 +5,5 @@ echo "--- :julia: Instantiating project"
 
 julia --project -e 'using Pkg;
                     Pkg.instantiate();
-                    Pkg.precompile()'
-
-buildkite-agent annotate --style success --context julia-test <<EOD
-Instantiated project:
-
-\`\`\`
-$(julia --project -e 'using Pkg; Pkg.status()')
-\`\`\`
-EOD
+                    Pkg.precompile();
+                    Pkg.status()'
