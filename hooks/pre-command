@@ -9,6 +9,6 @@ buildkite-agent annotate --style success --context project <<EOD
 Instantiated project:
 
 \`\`\`
-$(julia -e 'using Pkg; Pkg.status()')
+$(julia --project -e 'using Pkg; Pkg.status()')
 \`\`\`
 EOD
