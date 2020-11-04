@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euov pipefail
+
+julia --project -e 'using Pkg;
+                    Pkg.instantiate();
+                    Pkg.precompile();
+                    Pkg.status()'

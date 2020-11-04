@@ -1,0 +1,6 @@
+name: Julia Project
+description: Instantiates a Julia project for use in your pipeline.
+author: https://github.com/maleadt
+requirements: [julia]
+configuration:
+  additionalProperties: false
