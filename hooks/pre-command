@@ -3,5 +3,12 @@ set -euov pipefail
 
 julia --project -e 'using Pkg;
                     Pkg.instantiate();
-                    Pkg.precompile();
-                    Pkg.status()'
+                    Pkg.precompile()'
+
+buildkite-agent annotate --style success --context project <<EOD
+Instantiated project:
+
+\`\`\`
+$(julia -e 'using Pkg; Pkg.status()')
+\`\`\`
+EOD
