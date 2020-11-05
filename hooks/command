@@ -3,5 +3,11 @@ set -euov pipefail
 
 echo "+++ :julia: Running tests"
 
-julia --project -e 'using Pkg;
-                    Pkg.test()'
+coverage=${BUILDKITE_PLUGIN_JULIA_TEST_COVERAGE:-true}
+julia_args=${BUILDKITE_PLUGIN_JULIA_TEST_JULIA_ARGS:-""}
+test_args=${BUILDKITE_PLUGIN_JULIA_TEST_TEST_ARGS:-""}
+
+julia --project -e "using Pkg;
+                    Pkg.test(; coverage=$coverage,
+                               julia_args=\`$julia_args\`,
+                               test_args=\`$test_args\`)"
