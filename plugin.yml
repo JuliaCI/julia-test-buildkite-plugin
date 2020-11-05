@@ -1,5 +1,5 @@
-name: Julia Project
-description: Instantiates a Julia project for use in your pipeline.
+name: Julia Test
+description: Instantiates and tests a Julia project.
 author: https://github.com/maleadt
 requirements: [julia]
 configuration:
