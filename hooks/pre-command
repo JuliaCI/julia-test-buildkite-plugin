@@ -3,7 +3,9 @@ set -euo pipefail
 
 echo "--- :julia: Instantiating project"
 
-julia --project -e 'using Pkg;
-                    Pkg.instantiate();
-                    Pkg.precompile();
+julia --project -e 'using Pkg
+                    Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
+
+                    Pkg.instantiate()
+                    Pkg.precompile()
                     Pkg.status()'

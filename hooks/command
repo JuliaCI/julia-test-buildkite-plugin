@@ -7,7 +7,9 @@ coverage=${BUILDKITE_PLUGIN_JULIA_TEST_COVERAGE:-true}
 julia_args=${BUILDKITE_PLUGIN_JULIA_TEST_JULIA_ARGS:-""}
 test_args=${BUILDKITE_PLUGIN_JULIA_TEST_TEST_ARGS:-""}
 
-julia --project -e "using Pkg;
+julia --project -e "using Pkg
+                    Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
+
                     Pkg.test(; coverage=$coverage,
                                julia_args=\`$julia_args\`,
                                test_args=\`$test_args\`)"
