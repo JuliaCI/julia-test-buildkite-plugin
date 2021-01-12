@@ -7,5 +7,6 @@ julia --project -e 'using Pkg
                     Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
 
                     Pkg.instantiate()
+                    Pkg.build()
                     Pkg.precompile()
                     Pkg.status()'
