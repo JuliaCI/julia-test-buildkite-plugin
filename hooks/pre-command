@@ -1,11 +1,15 @@
 #!/bin/bash
-set -euo pipefail
+source $(dirname ${BASH_SOURCE})/common
 
 echo "--- :julia: Instantiating project"
 
-julia --project -e 'using Pkg
-                    Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
+julia --project=${project} -e "
+    using Pkg
+    ${REGISTRY_SKIP_BLOCK}
+    ${USE_SSH_BLOCK}
+    ${ADD_REGISTRIES_BLOCK}
 
-                    Pkg.instantiate()
-                    Pkg.build()
-                    Pkg.status()'
+    Pkg.instantiate()
+    Pkg.build()
+    Pkg.status()
+"

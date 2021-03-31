@@ -10,4 +10,12 @@ configuration:
       type: string
     test_args:
       type: string
+    use_ssh:
+      type: boolean
+    project:
+      type: string
+    update_registry:
+      type: boolean
+    extra_registries:
+      type: string
   additionalProperties: false

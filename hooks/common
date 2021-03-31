@@ -1,0 +1,46 @@
+#!/bin/bash
+set -euo pipefail
+
+coverage=${BUILDKITE_PLUGIN_JULIA_TEST_COVERAGE:-true}
+julia_args=${BUILDKITE_PLUGIN_JULIA_TEST_JULIA_ARGS:-""}
+test_args=${BUILDKITE_PLUGIN_JULIA_TEST_TEST_ARGS:-""}
+project=${BUILDKITE_PLUGIN_JULIA_TEST_PROJECT:-.}
+
+# Allow the user to purposefully skip updating the registry (e.g. we know it's already been done)
+REGISTRY_SKIP_BLOCK=""
+if [[ "${BUILDKITE_PLUGIN_JULIA_TEST_UPDATE_REGISTRY:-true}" != "true" ]]; then
+    REGISTRY_SKIP_BLOCK="Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true"
+fi
+
+# If the user wants to use SSH to clone packages during instantiation, allow for that here
+USE_SSH_BLOCK=""
+if [[ "${BUILDKITE_PLUGIN_JULIA_TEST_USE_SSH:-false}" == "true" ]]; then
+    USE_SSH_BLOCK='
+        if VERSION >= v"1.2"
+            Pkg.setprotocol!(protocol="ssh")
+        else
+            Pkg.setprotocol!("ssh")
+        end
+    '
+fi
+
+# If the user has some extra registries they want to add, we build a Pkg command to do that here
+# assume that the user always wants to include General, and that all registries are referred to by URL.
+ADD_REGISTRIES_BLOCK=""
+if [[ -n "${BUILDKITE_PLUGIN_JULIA_TEST_EXTRA_REGISTRIES:-}" ]]; then
+    ADD_REGISTRIES_BLOCK='
+        # Sadly, Julia 1.0 does not know how to do this.
+        if VERSION < v"1.1"
+            error("Custom registries cannot be programmatically added on Julia 1.0.X")
+        end
+
+        Pkg.Registry.add([
+            RegistrySpec(name="General"),
+    '
+    for url in $(echo ${BUILDKITE_PLUGIN_JULIA_TEST_EXTRA_REGISTRIES} | tr ',' ' '); do
+        ADD_REGISTRIES_BLOCK+="
+            RegistrySpec(url=\"${url}\"),
+        "
+    done
+    ADD_REGISTRIES_BLOCK+='])'
+fi

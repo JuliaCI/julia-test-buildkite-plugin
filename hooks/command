@@ -1,15 +1,18 @@
 #!/bin/bash
-set -euo pipefail
+source $(dirname ${BASH_SOURCE})/common
 
 echo "+++ :julia: Running tests"
+julia --project=${project} -e "
+    using Pkg
 
-coverage=${BUILDKITE_PLUGIN_JULIA_TEST_COVERAGE:-true}
-julia_args=${BUILDKITE_PLUGIN_JULIA_TEST_JULIA_ARGS:-""}
-test_args=${BUILDKITE_PLUGIN_JULIA_TEST_TEST_ARGS:-""}
+    # We never update the registry when running tests, we assume if you wanted this done, you'd do it in the pre-command
+    Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
 
-julia --project -e "using Pkg
-                    Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
+    # In the event that you might need to fetch test-only dependencies that are private,
+    # we set Pkg to use SSH for cloning non-PkgServer-served packages here as well
+    ${USE_SSH_BLOCK}
 
-                    Pkg.test(; coverage=$coverage,
-                               julia_args=\`$julia_args\`,
-                               test_args=\`$test_args\`)"
+    Pkg.test(; coverage=$coverage,
+                julia_args=\`$julia_args\`,
+                test_args=\`$test_args\`)
+"
