@@ -19,6 +19,7 @@ chmod +x /usr/bin/julia
     refute_output --partial "Pkg.UPDATED_REGISTRY_THIS_SESSION"
     refute_output --partial "Pkg.setprotocol!"
     refute_output --partial "Pkg.Registry.add"
+    refute_output --partial "bug-report"
 
     assert_success
 }
@@ -82,6 +83,15 @@ chmod +x /usr/bin/julia
     assert_output --partial "test_args=\`foo\`"
     assert_success
     unset BUILDKITE_PLUGIN_JULIA_TEST_TEST_ARGS
+}
+
+@test "Parameter Setting: upload_rr_trace" {
+    export BUILDKITE_PLUGIN_JULIA_TEST_UPLOAD_RR_TRACE="always"
+    run $PWD/hooks/command
+
+    assert_output --partial "bug-report"
+    assert_success
+    unset BUILDKITE_PLUGIN_JULIA_TEST_UPLOAD_RR_TRACE
 }
 
 @test "Registry update skipping" {

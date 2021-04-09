@@ -2,7 +2,7 @@
 source $(dirname ${BASH_SOURCE})/common
 
 echo "+++ :julia: Running tests"
-julia --project=${project} -e "
+julia ${bugreport_args} --project=${project} -e "
     using Pkg
 
     # We never update the registry when running tests, we assume if you wanted this done, you'd do it in the pre-command
