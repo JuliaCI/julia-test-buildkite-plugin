@@ -1,0 +1,11 @@
+#!/bin/bash
+source $(dirname ${BASH_SOURCE})/common
+
+# If we either always upload a trace (or only upload on error), pack it and append it to our artifact paths
+if [[ "${upload_rr_trace}" == "always" ]] || ( [[ "${upload_rr_trace}" == "error" ]] && [[ "${BUILDKITE_COMMAND_EXIT_STATUS}" != "0" ]] ); then
+    # Pack the trace directory into a .tar.zst
+    julia $(dirname ${BASH_SOURCE})/pack_rr_trace.jl
+fi
+
+# Clean up our `rr` directory no matter what
+rm -rf "${_RR_TRACE_DIR}"

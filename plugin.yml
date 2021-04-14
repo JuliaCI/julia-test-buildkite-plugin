@@ -18,4 +18,6 @@ configuration:
       type: boolean
     extra_registries:
       type: string
+    upload_rr_trace:
+      type: string
   additionalProperties: false
