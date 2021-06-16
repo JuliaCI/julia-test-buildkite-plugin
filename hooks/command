@@ -1,18 +1,27 @@
 #!/bin/bash
 source $(dirname ${BASH_SOURCE})/common
 
-echo "+++ :julia: Running tests"
-julia ${bugreport_args} --project=${project} -e "
-    using Pkg
+# Use default julia test running harness
+if [[ "${run_tests}" == "true" ]]; then
+    echo "+++ :julia: Running tests"
+    julia ${bugreport_args} --project=${project} -e "
+        using Pkg
 
-    # We never update the registry when running tests, we assume if you wanted this done, you'd do it in the pre-command
-    Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
+        # We never update the registry when running tests, we assume if you wanted this done, you'd do it in the pre-command
+        Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
 
-    # In the event that you might need to fetch test-only dependencies that are private,
-    # we set Pkg to use SSH for cloning non-PkgServer-served packages here as well
-    ${USE_SSH_BLOCK}
+        # In the event that you might need to fetch test-only dependencies that are private,
+        # we set Pkg to use SSH for cloning non-PkgServer-served packages here as well
+        ${USE_SSH_BLOCK}
 
-    Pkg.test(; coverage=$coverage,
-                julia_args=\`$julia_args\`,
-                test_args=\`$test_args\`)
-"
+        Pkg.test(; coverage=$coverage,
+                    julia_args=\`$julia_args\`,
+                    test_args=\`$test_args\`)
+    "
+fi
+
+# If there is a `commands` block specified in the YAML, run that as well
+if [[ -n "${BUILDKITE_COMMAND}" ]]; then
+    echo "+++ Running yaml-provided user commands"
+    eval "${BUILDKITE_COMMAND}"
+fi

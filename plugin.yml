@@ -4,20 +4,40 @@ author: https://github.com/maleadt
 requirements: [julia]
 configuration:
   properties:
-    coverage:
+    ## Runtime testing options
+    # Whether to actually run the Julia test suite (defaults to `true`)
+    run_tests:
       type: boolean
-    julia_args:
-      type: string
-    test_args:
-      type: string
-    use_ssh:
-      type: boolean
+    # Sets the project path to be tested, defaults to `"."`
     project:
       type: string
-    update_registry:
-      type: boolean
-    extra_registries:
-      type: string
+    # Whether to run within `rr` and upload a trace, takes one of the following options:
+    # - "never": `rr` is never used (this is the default)
+    # - "always": `rr` is used and a trace is unconditionally uploaded
+    # - "error": `rr` is used and a trace is uploaded only if testing fails.
     upload_rr_trace:
       type: string
+
+    ## Project instantiation options
+    # Whether to update the registry before instantiating, defaults to `"true"`.
+    update_registry:
+      type: boolean
+    # Extra registries to add before instantiating as a comma-separated list
+    extra_registries:
+      type: string
+    # Use SSH when instantiating the projects (runs `Pkg.setprotocol!(protocol="ssh")`), defaults to `false`
+    use_ssh:
+      type: boolean
+
+    ## Kwargs that get passed to `Pkg.test()`
+    # Whether to upload coverage (passes `coverage` to `Pkg.test()`), defaults to `true`
+    coverage:
+      type: boolean
+    # Extra julia args (passes `julia_args` to `Pkg.test()`), defaults to `""`
+    julia_args:
+      type: string
+    # Extra test args (passes `test_args` to `Pkg.test()`), defaults to `""`
+    test_args:
+      type: string
+
   additionalProperties: false
