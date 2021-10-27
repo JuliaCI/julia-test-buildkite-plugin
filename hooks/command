@@ -25,3 +25,9 @@ if [[ -n "${BUILDKITE_COMMAND}" ]]; then
     echo "+++ Running yaml-provided user commands"
     eval "${BUILDKITE_COMMAND}"
 fi
+
+# Restore the original Manifest
+if [ -n "$custom_manifest" ]; then
+    rm Manifest.toml
+    mv Manifest.toml.bk_bak Manifest.toml
+fi

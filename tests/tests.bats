@@ -94,6 +94,22 @@ chmod +x /usr/bin/julia
     unset BUILDKITE_PLUGIN_JULIA_TEST_UPLOAD_RR_TRACE
 }
 
+@test "Parameter Setting: custom_manifest" {
+    export BUILDKITE_PLUGIN_JULIA_TEST_CUSTOM_MANIFEST="MyManifest.toml"
+    run echo "1" > "Manifest.toml"
+    run echo "2" > "MyManifest.toml"
+
+    run $PWD/hooks/pre-command
+    run grep "2" Manifest.toml
+    run grep "1" Manifest.toml.bk_bak
+
+    run $PWD/hooks/command
+    run grep "1" Manifest.toml
+
+    assert_success
+    unset BUILDKITE_PLUGIN_JULIA_TEST_CUSTOM_MANIFEST
+}
+
 @test "Registry update skipping" {
     export BUILDKITE_PLUGIN_JULIA_TEST_UPDATE_REGISTRY="false"
     run $PWD/hooks/pre-command
