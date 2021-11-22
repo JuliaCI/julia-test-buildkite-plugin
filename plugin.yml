@@ -28,6 +28,9 @@ configuration:
     # Use SSH when instantiating the projects (runs `Pkg.setprotocol!(protocol="ssh")`), defaults to `false`
     use_ssh:
       type: boolean
+    # The path to the Manifest to instantiate, if different from the default
+    custom_manifest:
+      type: string
 
     ## Kwargs that get passed to `Pkg.test()`
     # Whether to upload coverage (passes `coverage` to `Pkg.test()`), defaults to `true`

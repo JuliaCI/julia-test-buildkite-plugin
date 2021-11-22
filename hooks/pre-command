@@ -3,6 +3,11 @@ source $(dirname ${BASH_SOURCE})/common
 
 echo "--- :julia: Instantiating project"
 
+if [ -n "$custom_manifest" ]; then
+    mv Manifest.toml Manifest.toml.bk_bak
+    cp "$custom_manifest" Manifest.toml
+fi
+
 julia --project=${project} -e "
     using Pkg
     ${REGISTRY_SKIP_BLOCK}
