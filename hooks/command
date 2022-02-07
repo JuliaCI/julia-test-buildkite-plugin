@@ -5,7 +5,7 @@ source $(dirname ${BASH_SOURCE})/common
 if [[ "${run_tests}" == "true" ]]; then
     echo "+++ :julia: Running tests"
     if [[ -z "${package}" ]]; then
-        PKG="PackageSpec[]"
+        PKG=""
     else
         PKG="\"${package}\""
     fi
