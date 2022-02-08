@@ -4,6 +4,11 @@ source $(dirname ${BASH_SOURCE})/common
 # Use default julia test running harness
 if [[ "${run_tests}" == "true" ]]; then
     echo "+++ :julia: Running tests"
+    if [[ -z "${package}" ]]; then
+        PKG=""
+    else
+        PKG="\"${package}\""
+    fi
     julia ${bugreport_args} --project=${project} -e "
         using Pkg
 
@@ -14,7 +19,7 @@ if [[ "${run_tests}" == "true" ]]; then
         # we set Pkg to use SSH for cloning non-PkgServer-served packages here as well
         ${USE_SSH_BLOCK}
 
-        Pkg.test(; coverage=$coverage,
+        Pkg.test(${PKG}; coverage=$coverage,
                     julia_args=\`$julia_args\`,
                     test_args=\`$test_args\`)
     "

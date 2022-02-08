@@ -28,7 +28,7 @@ chmod +x /usr/bin/julia
     run $PWD/hooks/command
 
     assert_output --partial " --project=. "
-    assert_output --partial "Pkg.test("
+    assert_output --partial "Pkg.test(PackageSpec[]"
     assert_output --partial "coverage=true"
     assert_output --partial "julia_args=\`\`"
     assert_output --partial "test_args=\`\`"
@@ -92,6 +92,15 @@ chmod +x /usr/bin/julia
     assert_output --partial "bug-report"
     assert_success
     unset BUILDKITE_PLUGIN_JULIA_TEST_UPLOAD_RR_TRACE
+}
+
+@test "Parameter Setting: custom package" {
+    export BUILDKITE_PLUGIN_JULIA_TEST_PACKAGE="Example"
+    run $PWD/hooks/command
+
+    assert_output --partial "Pkg.test(\"Example\""
+    assert_success
+    unset BUILDKITE_PLUGIN_JULIA_TEST_PACKAGE
 }
 
 @test "Parameter Setting: custom_manifest" {

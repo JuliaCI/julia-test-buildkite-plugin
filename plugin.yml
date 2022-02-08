@@ -11,6 +11,9 @@ configuration:
     # Sets the project path to be tested, defaults to `"."`
     project:
       type: string
+    # Determine what package in the project to test
+    package:
+      type: string
     # Whether to run within `rr` and upload a trace, takes one of the following options:
     # - "never": `rr` is never used (this is the default)
     # - "always": `rr` is used and a trace is unconditionally uploaded
