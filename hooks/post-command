@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source $(dirname ${BASH_SOURCE})/common
 
 # If we either always upload a trace (or only upload on error), pack it and append it to our artifact paths
