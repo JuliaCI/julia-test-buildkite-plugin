@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 source $(dirname ${BASH_SOURCE})/common
 
+# If there is a `commands` block specified in the YAML, run that as well
+if [[ -n "${BUILDKITE_COMMAND}" ]]; then
+    echo "+++ Running yaml-provided user commands"
+    eval "${BUILDKITE_COMMAND}"
+fi
+
 # Use default julia test running harness
 if [[ "${run_tests}" == "true" ]]; then
     echo "+++ :julia: Running tests"
@@ -23,12 +29,6 @@ if [[ "${run_tests}" == "true" ]]; then
                     julia_args=\`$julia_args\`,
                     test_args=\`$test_args\`)
     "
-fi
-
-# If there is a `commands` block specified in the YAML, run that as well
-if [[ -n "${BUILDKITE_COMMAND}" ]]; then
-    echo "+++ Running yaml-provided user commands"
-    eval "${BUILDKITE_COMMAND}"
 fi
 
 # Restore the original Manifest
