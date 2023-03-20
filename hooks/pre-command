@@ -17,4 +17,4 @@ julia --project=${project} -e "
     Pkg.instantiate()
     Pkg.build()
     Pkg.status()
-"
+" || exit 3
