@@ -8,6 +8,7 @@ if [ -n "$custom_manifest" ]; then
     cp "$custom_manifest" Manifest.toml
 fi
 
+JULIA_PKG_PRECOMPILE_AUTO=0 \
 julia --project=${project} -e "
     using Pkg
     ${REGISTRY_SKIP_BLOCK}
