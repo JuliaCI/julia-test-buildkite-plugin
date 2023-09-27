@@ -8,17 +8,6 @@ if [ -n "$custom_manifest" ]; then
     cp "$custom_manifest" Manifest.toml
 fi
 
-# when packages ship a manifest, we may need to resolve it before we can instantiate.
-# we need to do this _outside_ of that environment, because Pkg may not be usable within.
-if [ -f "Manifest.toml" ]; then
-    echo "Resolving manifest..."
-    julia -e "
-        using Pkg
-        Pkg.activate(\".\")
-        Pkg.resolve()
-    "
-fi
-
 JULIA_PKG_PRECOMPILE_AUTO=0 \
 julia --project=${project} -e "
     using Pkg
