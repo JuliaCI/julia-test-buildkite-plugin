@@ -52,6 +52,11 @@ if [[ -n "${BUILDKITE_PLUGIN_JULIA_TEST_EXTRA_REGISTRIES:-}" ]]; then
     ADD_REGISTRIES_BLOCK+='])'
 fi
 
+ALLOW_RERESOLVE_LINE=""
+if [[ "${BUILDKITE_PLUGIN_JULIA_TEST_ALLOW_RERESOLVE:-true}" != "true" ]]; then
+    ALLOW_RERESOLVE_LINE="allow_reresolve=${BUILDKITE_PLUGIN_JULIA_TEST_ALLOW_RERESOLVE},"
+fi
+
 bugreport_args=""
 if [[ "${upload_rr_trace}" != "never" ]]; then
     bugreport_args="--bug-report=rr-local --"

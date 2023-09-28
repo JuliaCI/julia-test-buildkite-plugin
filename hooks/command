@@ -27,7 +27,8 @@ if [[ "${run_tests}" == "true" ]]; then
 
         Pkg.test(${PKG}; coverage=$coverage,
                     julia_args=\`$julia_args\`,
-                    test_args=\`$test_args\`)
+                    test_args=\`$test_args\`,
+                    ${ALLOW_RERESOLVE_LINE})
     "
 fi
 

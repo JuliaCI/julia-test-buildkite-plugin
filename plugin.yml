@@ -45,5 +45,8 @@ configuration:
     # Extra test args (passes `test_args` to `Pkg.test()`), defaults to `""`
     test_args:
       type: string
+    # Whether to allow Pkg to automatically re-resolve manifests if used with an incompatible Julia version, defaults to `true`
+    allow_reresolve:
+      type: boolean
 
   additionalProperties: false
