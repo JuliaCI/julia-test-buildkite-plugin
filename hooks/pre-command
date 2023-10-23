@@ -9,8 +9,10 @@ if [ -n "$custom_manifest" ]; then
 fi
 
 JULIA_PKG_PRECOMPILE_AUTO=0 \
-julia --project=${project} -e "
+julia -e "
     using Pkg
+    Pkg.activate(ARGS[1])
+
     ${REGISTRY_SKIP_BLOCK}
     ${USE_SSH_BLOCK}
     ${ADD_REGISTRIES_BLOCK}
@@ -18,4 +20,4 @@ julia --project=${project} -e "
     Pkg.instantiate()
     Pkg.build()
     Pkg.status()
-"
+" ${project}
