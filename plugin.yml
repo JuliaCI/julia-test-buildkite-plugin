@@ -49,4 +49,8 @@ configuration:
     allow_reresolve:
       type: boolean
 
+    # Whether to automatically run PkgFsck.jl on test failure
+    fsck_on_error:
+      type: boolean
+
   additionalProperties: false

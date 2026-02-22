@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-source $(dirname ${BASH_SOURCE})/common
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "${SCRIPT_DIR}/common"
 
 # If there is a `commands` block specified in the YAML, run that as well
-if [[ -n "${BUILDKITE_COMMAND}" ]]; then
+if [[ -n "${BUILDKITE_COMMAND:-}" ]]; then
     echo "+++ Running yaml-provided user commands"
     eval "${BUILDKITE_COMMAND}"
 fi

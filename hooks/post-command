@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-source $(dirname ${BASH_SOURCE})/common
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "${SCRIPT_DIR}/common"
 
 # If we either always upload a trace (or only upload on error), pack it and append it to our artifact paths
 if [[ "${upload_rr_trace}" == "always" ]] || ( [[ "${upload_rr_trace}" == "error" ]] && [[ "${BUILDKITE_COMMAND_EXIT_STATUS}" != "0" ]] ); then
     # Pack the trace directory into a .tar.zst
-    julia $(dirname ${BASH_SOURCE})/pack_rr_trace.jl
+    julia "${SCRIPT_DIR}/pack_rr_trace.jl"
 fi
 
 # Clean up our `rr` directory no matter what
