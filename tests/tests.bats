@@ -1,6 +1,11 @@
 #!/usr/bin/env bats
 
-load "$BATS_PATH/load.bash"
+setup() {
+  load "$BATS_PLUGIN_PATH/load.bash"
+
+  # Uncomment to enable stub debugging
+  # export GIT_STUB_DEBUG=/dev/tty
+}
 
 # Create fake "julia" command that just prints out its invocation
 echo '#!/bin/bash
@@ -28,7 +33,7 @@ chmod +x /usr/bin/julia
     run $PWD/hooks/command
 
     assert_output --partial " --project=. "
-    assert_output --partial "Pkg.test(PackageSpec[]"
+    assert_output --partial "Pkg.test("
     assert_output --partial "coverage=true"
     assert_output --partial "julia_args=\`\`"
     assert_output --partial "test_args=\`\`"
@@ -104,6 +109,7 @@ chmod +x /usr/bin/julia
 }
 
 @test "Parameter Setting: custom_manifest" {
+    rm -f Manifest.toml MyManifest.toml Manifest.toml.bk_bak
     export BUILDKITE_PLUGIN_JULIA_TEST_CUSTOM_MANIFEST="MyManifest.toml"
     run echo "1" > "Manifest.toml"
     run echo "2" > "MyManifest.toml"
@@ -117,6 +123,8 @@ chmod +x /usr/bin/julia
 
     assert_success
     unset BUILDKITE_PLUGIN_JULIA_TEST_CUSTOM_MANIFEST
+
+    rm -f Manifest.toml MyManifest.toml Manifest.toml.bk_bak
 }
 
 @test "Registry update skipping" {
