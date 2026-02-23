@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "${SCRIPT_DIR}/common"
+
+# fsck the depot if we errored out
+if [[ "${fsck_on_error}" == "true" ]] && ( [[ "${BUILDKITE_COMMAND_EXIT_STATUS:-1}" != "0" ]] || [[ "${BUILDKITE_PLUGIN_JULIA_TEST_INSTANTIATE_STATUS:-1}" != "0" ]] ); then
+    echo "--- Running fsck on depots"
+    julia "${SCRIPT_DIR}/fsck_depot.jl"
+fi

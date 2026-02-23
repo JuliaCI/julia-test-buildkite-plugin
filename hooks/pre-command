@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-source $(dirname ${BASH_SOURCE})/common
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "${SCRIPT_DIR}/common"
 
 echo "--- :julia: Instantiating project"
 
@@ -19,3 +20,6 @@ julia --project=${project} -e "
     Pkg.build()
     Pkg.status()
 "
+
+# Report this status so that `pre-exit` can count an instantiate failure as an overall failure too
+export BUILDKITE_PLUGIN_JULIA_TEST_INSTANTIATE_STATUS="$?"
