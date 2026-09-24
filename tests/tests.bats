@@ -1,11 +1,21 @@
 #!/usr/bin/env bats
 
-load "$BATS_PATH/load.bash"
+load "${BATS_PLUGIN_PATH}/load.bash"
+
+# Variables that Buildkite always sets
+export BUILDKITE_BUILD_ID="00000000-0000-0000-0000-000000000000"
+export BUILDKITE_COMMAND=""
+
+teardown() {
+    rm -f Manifest.toml MyManifest.toml Manifest.toml.bk_bak
+}
 
 # Create fake "julia" command that just prints out its invocation
-echo '#!/bin/bash
-echo julia "$@"' > /usr/bin/julia
-chmod +x /usr/bin/julia
+fake_bin="$(mktemp -d)"
+echo '#!/usr/bin/env bash
+echo julia "$@"' > "${fake_bin}/julia"
+chmod +x "${fake_bin}/julia"
+export PATH="${fake_bin}:${PATH}"
 
 @test "Basic Instantiation" {
     run $PWD/hooks/pre-command
@@ -28,7 +38,7 @@ chmod +x /usr/bin/julia
     run $PWD/hooks/command
 
     assert_output --partial " --project=. "
-    assert_output --partial "Pkg.test(PackageSpec[]"
+    assert_output --partial "Pkg.test(; coverage=true"
     assert_output --partial "coverage=true"
     assert_output --partial "julia_args=\`\`"
     assert_output --partial "test_args=\`\`"
@@ -105,17 +115,22 @@ chmod +x /usr/bin/julia
 
 @test "Parameter Setting: custom_manifest" {
     export BUILDKITE_PLUGIN_JULIA_TEST_CUSTOM_MANIFEST="MyManifest.toml"
-    run echo "1" > "Manifest.toml"
-    run echo "2" > "MyManifest.toml"
+    echo "1" > "Manifest.toml"
+    echo "2" > "MyManifest.toml"
 
     run $PWD/hooks/pre-command
+    assert_success
     run grep "2" Manifest.toml
+    assert_success
     run grep "1" Manifest.toml.bk_bak
+    assert_success
 
     run $PWD/hooks/command
-    run grep "1" Manifest.toml
-
     assert_success
+    run grep "1" Manifest.toml
+    assert_success
+    [[ ! -e Manifest.toml.bk_bak ]]
+
     unset BUILDKITE_PLUGIN_JULIA_TEST_CUSTOM_MANIFEST
 }
 

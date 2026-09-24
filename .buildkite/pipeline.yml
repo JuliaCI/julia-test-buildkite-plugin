@@ -1,0 +1,69 @@
+self_test_setup: &self_test_setup
+  post-checkout: |
+    mkdir -p .buildkite/plugins/julia-test
+    cp -Ra hooks plugin.yml .buildkite/plugins/julia-test/
+
+steps:
+  - label: ":bash: Unit tests"
+    agents:
+      queue: "test"
+      os: "linux"
+      arch: "x86_64"
+    command: "tests/run_bats.sh"
+
+  - label: ":julia: Example.jl on {{matrix.os}} {{matrix.arch}}, Julia {{matrix.julia}}"
+    matrix:
+      setup:
+        os: ["linux"]
+        arch: ["x86_64"]
+        julia: ["1.10", "1", "nightly"]
+      adjustments:
+        - with: { os: "linux", arch: "aarch64", julia: "1" }
+        - with: { os: "macos", arch: "aarch64", julia: "1" }
+        - with: { os: "windows", arch: "x86_64", julia: "1" }
+    agents:
+      queue: "test"
+      os: "{{matrix.os}}"
+      arch: "{{matrix.arch}}"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "{{matrix.julia}}"
+      - staticfloat/metahook#sf/windows_backslashes:
+          <<: *self_test_setup
+      - "./.buildkite/plugins/julia-test":
+          project: "tests/Example"
+          package: "Example"
+
+  - label: ":julia: TestPackage with default options"
+    agents:
+      queue: "test"
+      os: "linux"
+      arch: "x86_64"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1"
+      - staticfloat/metahook#sf/windows_backslashes:
+          <<: *self_test_setup
+      - "./.buildkite/plugins/julia-test":
+          project: "tests/TestPackage"
+
+  - label: ":julia: TestPackage with custom options"
+    agents:
+      queue: "test"
+      os: "linux"
+      arch: "x86_64"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1"
+      - staticfloat/metahook#sf/windows_backslashes:
+          <<: *self_test_setup
+      - "./.buildkite/plugins/julia-test":
+          project: "tests/TestPackage"
+          coverage: false
+          julia_args: "-O0"
+          test_args: "foo bar"
+    env:
+      TESTPACKAGE_CHECK_OPTIONS: "true"
+    # The plugin runs these before the tests, which verify that they did
+    commands: |
+      touch tests/TestPackage/commands_ran
